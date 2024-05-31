@@ -622,24 +622,213 @@ lado der )
     = por aritmetica.
     1 
 
-caso Inductivo) 
-    x = p:ps 
+caso Inductivo ) 
+    x = ():ps 
     HI. evalNU . succNU ps = (+1) . evalNU ps 
-    TI. ¿evalNU . succNU p:ps = (+1) . evalNU p:ps ?
+    TI. ¿evalNU . succNU ():ps = (+1) . evalNU ():ps ?
 
-lado izq) 
+lado izq ) 
+    evalNU . succNU ():ps 
+    = def succNU, x<- ():ps 
+    evalNU ((): succNU ps) 
+    = def evalNU , x<- (): succNU ps 
+    1 + evalNU (succNU ps)
+    = HI 
+    2 + evalNU
 
+lado der ) 
+    (+1) . evalNU ():ps  
+    = def evalNU , x<- ():ps  
+    1 + 1 + evalNU ps 
+    = 2 + evalNU ps 
+    DEMOSTRADO! 
 
 
 
 -- ii. para todo n1. para todo n2.
 -- evalNU (addNU n1 n2) = evalNU n1 + evalNU n2
 
+   ¿ evalNU (addNU n1 n2) = evalNU n1 + evalNU n2?
+
+caso base ) 
+    n1 = [] 
+
+lado izq ) 
+     evalNU (addNU n1 n2)
+     = def addNU, x<- [] n2 
+     evalNU n2 
+
+lado der ) 
+     evalNU [] + evalNU n2
+     = def evalNU, x<- [] 
+     0 + evalNU n2 
+     evalNU n2  
+     Demostrado! 
+
+caso inductivo ) 
+    n = ():zs 
+    HI. evalNU (addNU zs  n2) = evalNU zs  + evalNU n2
+    TI. ¿ evalNU (addNU (():zs ) n2) = evalNU (():zs)  + evalNU n2?
+lado izq ) 
+    evalNU (addNU (():zs ) n2)
+    = def addNU, x<- [] n2 
+    evalNU ((): addNU zs  n2)
+    = def evalNU, x<- (): addNU zs  n2
+    1 + evalNU (addNU zs  n2)
+    = HI 
+    1 + evalNU zs  + evalNU n2 
+
+lado der ) 
+    evalNU (():zs)  + evalNU n2
+    = def evalNU , x<- ():zs 
+    1 + evalNU zs  + evalNU n2 
+    DEMOSTRADO!
+ 
+--------------------------------------------------------
 -- iii. nu2n . n2nu = id
+    aplicamos ->PP.E 
+    para cualquier n. 
+   ¿ nu2n . n2nu n = id n ?
+
+caso base) 
+    n = Z
+    nu2n (n2nu Z) = id Z
+    nu2n ([])  = Z 
+    trivial! 
+
+caso inductivo) 
+    n = Sn' 
+    HI.  nu2n . n2nu n' = id n' 
+    TI. ¿ nu2n . n2nu Sn' = id Sn' ?
+
+lado izq ) 
+    nu2n . n2nu Sn' 
+    = def n2nu , x<- Sn'
+    nu2n ( (): n2nu n' )
+    = def nu2n, x <- (): n2nu n'
+    S ( nu2n (n2nu n') )
+    = HI 
+    S (id n')
+
+lado der ) 
+    id Sn'
+    = p.prop id 
+    S (id n')
+    DEMOSTRADO! 
+
+
 -- iv. n2nu . nu2n = id
+    aplicamos ->PP.E 
+    para cualquier n. 
+   ¿ n2nu . nu2n  n= id n?
+
+caso base ) 
+    n = []
+    n2nu . nu2n  n= id n
+    n2nu (Z) =  []
+    trivial! 
+
+caso inductivo ) 
+    n = ():xs 
+    HI. n2nu . nu2n xs = id xs
+    TI. ¿ n2nu . nu2n  ():xs = id ():xs ?
+
+lado izq) 
+    n2nu . nu2n  ():xs 
+    = def nu2n, x<- ():xs
+    n2nu (S (nu2n xs) )
+    ():  n2nu . nu2n xs  
+    = HI 
+    (): id xs 
+
+lado der) 
+    id ():xs 
+    = por def id. 
+    (): id xs 
+    DEMOSTRADO! 
 
 -- b. demostrar las siguientes propiedades:
 -- i. evalNB . normalizarNB = evalNB
+    ppio de ext.
+
+    Para todo xs, (evalNB . normalizarNB) xs = evalNB xs
+
+    Por def (.), es equivalente a
+
+    Para todo xs, evalNB (normalizarNB xs) = evalNB xs
+
+    Elijo un xs cualquiera,
+    y voy a demostrar por inducción estructural de listas sobre xs
+
+Caso base) 
+    xs = []
+
+¿ evalNB (normalizarNB []) = evalNB [] ?
+
+izq)
+    evalNB (normalizarNB [])
+    = -- def normalizarNB
+    evalNB []
+    der)
+
+    ambos lados son iguales, el caso base es verdadero
+
+Caso ind) 
+    xs = (z:zs)
+
+    HI) evalNB (normalizarNB zs) = evalNB zs
+    TI) ¿ evalNB (normalizarNB (z:zs)) = evalNB (z:zs) ?
+
+der)
+    evalNB (z:zs)
+    = -- def evalNB
+    evalDB z + 2 * evalNB zs
+    = -- HI
+    evalDB z + 2 * evalNB (normalizarNB zs)
+    = -- lema, d = z, ds = normalizarNB zs
+    evalNB (normD z (normalizarNB zs))
+
+izq)
+    evalNB (normalizarNB (z:zs))
+    = -- def normalizarNB
+    evalNB (normD z (normalizarNB zs))
+
+ambos lados son iguales, queda demostrado el caso inductivo
+-- Lema)
+-- Para todo d, ds. 
+-- evalDB d + 2 * evalNB ds = evalNB (normD d ds)
+
+-- Elijo un d y ds cualesquiera
+
+-- ¿ evalDB d + 2 * evalNB ds = evalNB (normD d ds) ?
+
+-- Caso 1) d = O y ds = []
+
+-- izq)
+-- evalDB O + 2 * evalNB []
+-- = -- def evalDB y evalNB
+-- 0 + 2 * 0
+-- = -- arit.
+-- 0
+
+-- der)
+-- evalNB (normD 0 [])
+-- = -- def normD
+-- evalNB []
+-- = -- def evalNB
+-- 0
+
+-- Caso 2) cualquier otro caso
+
+-- der)
+-- evalNB (normD d ds)
+-- = -- def normD
+-- evalNB (d:ds)
+-- = -- def evalNB
+-- evalDB d + 2 * evalNB ds
+
+-- Quedó demostrado para todos los casos de d y ds, por lo que la propiedad, es verdadera.
+
 -- ii. evalNB . succNB = (+1) . evalNB
 -- iii. para todo n1. para todo n2.
 -- evalNB (addNB n1 n2) = evalNB n1 + evalNB n2
