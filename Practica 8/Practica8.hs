@@ -25,7 +25,7 @@ prodN :: N -> N -> N
 -- que describe la representación unaria del
 -- producto de los números representados por los argumentos. La
 -- resolución debe ser exclusivamente simbólica.
-prodN  (Z)  m = m 
+prodN  (Z)  m = Z
 prodN (S x) m = addN (prodN x m) m  
 
 -- iv. 

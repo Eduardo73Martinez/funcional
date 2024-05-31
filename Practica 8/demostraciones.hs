@@ -375,6 +375,43 @@ lado der )
 
     Queda medio demostrado! 
 
+LEMA ! 
+¿ all p (reverse ys) = all p ys ?
+
+caso base) 
+    ys = []
+
+lado izq) 
+    all p reverse []
+    = def. reverse , x <- []
+    all p [] 
+    = def. all <- p [] 
+    true 
+lado der ) 
+    all p []
+    = def. all <- p [] 
+    true 
+    DEMOSTRADO EL CASO BASE! 
+
+CASO Inductivo ) 
+    ys = z:zs 
+    HI.  all p (reverse zs) = all p zs
+    TI.  ¿all p (reverse (z:zs)) = all p (z:zs)?
+lado izq ) 
+    all p (reverse (z:zs))
+    = def. reverse, x<- z:zs 
+    all p (reverse zs ++ [z])
+    = prop. all ,x<- (reverse zs ++ [z])    --tengo dos listas distribuyo all!
+    all p (reverse zs) && all p ([z])
+    = HI
+    all p zs && all p z 
+
+lado der ) 
+    all p (z:zs) 
+    = def. all , x<- p z:zs 
+    all p z && all p zs 
+    DEMOSTRADO ! 
+
 
 -- j. para todo xs. para todo ys. unzip (zip xs ys) = (xs, ys)
 -- (en este caso, mostrar que no vale)
@@ -387,19 +424,217 @@ lado der )
 -- b. demostrar las siguientes propiedades:
 -- i. para todo n1. para todo n2.
 -- evalN (addN n1 n2) = evalN n1 + evalN n2
+pp.ex ya lo tenemos!
 
+caso base 1) 
+    n1 = Z 
+    n2 /= Z 
+lado izq ) 
+    evalN (addN Z n2) 
+    = def addN , x<- z n2 
+    evalN n2 
+    
+lado der ) 
+    evalN Z + evalN n2 
+    = def eval, x<- Z 
+    0 + evalN n2  
+    = art. 
+    evalN n2 
+
+caso base 2) 
+    n1 /= Z 
+    n2 = Z 
+lado izq )             
+    evalN (addN n1 Z) 
+    = def addN , x<- n1 Z
+    evalN n1 
+    
+lado der ) 
+    evalN n1 + evalN Z 
+    = def eval, x<- Z 
+    evalN n1 + 0
+    = art. 
+    eval n1 
+    Demostrado ! 
+
+caso inductivo) "Lo hacemos sólo para n1, para n2 es identica la dem"
+    n1 = S (n1') 
+    n2 /= Z 
+    HI. evalN (addN n1' n2) = evalN n1' + evalN n2
+    TI. ¿evalN (addN Sn1' n2) = evalN Sn1' + evalN n2? 
+
+lado izq ) 
+    evalN (addN Sn1' n2)
+    = def addN , x<- Sn1' n2
+    evalN ( S (addN n1' n2 ) )
+    = def evalN , x<- S (addN n1' n2 ) 
+    1 + evalN (addN n1' n2)
+    = por HI 
+    1 + evalN n1' + evalN n2
+
+lado der ) 
+    evalN Sn1' + evalN n2 
+    = def eval, x<- Sn1' 
+    1 + eval n1' + eval n2 
+    Demostrado!
+---------------------------------------------------------------------------
 -- ii. para todo n1. para todo n2.
 -- evalN (prodN n1 n2) = evalN n1 * evalN n2
+pp.ex ya lo tenemos!
 
+caso base 1) 
+    n1 = Z 
+    n2 /= Z 
+lado izq ) 
+    evalN (prodN Z n2) 
+    = def prodN , x<- z n2 
+    evalN Z  
+    = def. evalN x <- Z 
+    0
+    
+lado der ) 
+    evalN Z * evalN n2
+    = def eval, x<- Z 
+    0 * evalN n2  
+    = art. 
+    0
+    DEMOSTRADO EL CASO BASE! 
+
+CASO Inductivo)    
+    n1 = S n1'  
+    n2 /= Z 
+    HI. evalN (prodN n1' n2) = evalN n1' * evalN n2
+    TI. ¿evalN (prodN Sn1' n2) = evalN Sn1' * evalN n2?
+    
+lado izq) 
+    evalN (prod Sn1' n2)
+    = def prod , x<- Sn1' n2 
+    evalN (addN (prodN n1' n2) n2)
+    = por propiedad anterior . evanN (addN n1 n2) = evalN n1 + eval n2 
+    evalN (prodN n1' n2)  + evalN n2 
+    = HI 
+    evalN n1' * evalN n2 + eval n2 
+
+
+lado der) 
+    evalN Sn1' * evalN n2 
+    = def evalN, x<- Sn1'
+    (1 + evalN n1') * evalN n2 
+    = por pro.distr 
+    evalN n1' * evalN n2 + eval n2 
+    QUEDA DEMOSTRADO! 
+---------------------------------------------------------------
 -- iii. int2N . evalN = id
+    pp.ex 
+    PARA TODO n  
+    ¿int2N (evalN n)= id n ?
+
+caso base) 
+    n = Z 
+
+lado izq) 
+    int2N (evalN Z)
+    = def evalN, x<- Z
+    int2N (0) 
+    = def int2N , x<- 0 
+    Z 
+
+lado der)  
+    id Z 
+    = def id, x<- Z 
+    Z 
+    DEMOSTRADO ! 
+
+caso Inductivo ) 
+    n = S n' 
+    HI. int2N (evalN n')= id n'
+
+    TI. ¿int2N (evalN (S n'))= (id S n')?
+
+lado izq ) 
+    int2N (evalN (S n'))  
+    =def evalN, x<- (S n')
+    int2N (1 + evalN n')
+    = def.int2N, x<- (1 + evalN n')
+    S (evalN n')
+    = HI 
+    S (id n')
+
+lado der ) 
+    (id S n')
+    = por def id.
+    S(id n')
+    DEMOSTRADO! 
+--------------------------------------------------------------------------
 
 -- iv. evalN . int2N = id 
+app.pp ext. 
+    PARA TODO x. 
+     ¿evalN . int2N x = id x ?
 
+CASO BASE)  
+    x = 0
+    evalN  (int2N 0 )= id 0
+    evalN  ( Z)= 0
+    trivial ! 
+
+CASO INDUCTIVO)
+    x = 1 + x'
+    HI. evalN . int2N x' = id x'
+    TI. evalN . int2N (1+x') = id (1+x')
+
+lado izq) 
+    evalN . int2N (1+x') 
+    = def int2N, x<- (1+x')
+    evalN(S (int2N x') )
+    = def evalN , x <- S (int2N x') 
+    1 + evalN (int2N x') 
+    = HI 
+    1 + id x'
+
+lado der) 
+     id (1+x') 
+     = app dist. id 
+     1 + id x' 
+     DEMOSTRADO! 
 
 -- b. demostrar las siguientes propiedades:
 -- i. evalNU . succNU = (+1) . evalNU
+
+app.pp ext. 
+    PARA TODO x. 
+     ¿evalNU . succNU x = (+1) . evalNU x ?
+
+caso base 
+    x = []
+
+lado izq) 
+    evalNU . succNU []
+    = def succNU, x<- []
+    evalNU [()]
+    =def evalNU, x <- [()]
+    1     
+
+lado der ) 
+    (+1) . evalNU []
+    = def evalNU , x<- [] 
+    1 + 0 
+    = por aritmetica.
+    1 
+
+caso Inductivo) 
+    x = p:ps 
+    HI. evalNU . succNU ps = (+1) . evalNU ps 
+    TI. ¿evalNU . succNU p:ps = (+1) . evalNU p:ps ?
+
+lado izq) 
+
+
+
+
 -- ii. para todo n1. para todo n2.
 -- evalNU (addNU n1 n2) = evalNU n1 + evalNU n2
+
 -- iii. nu2n . n2nu = id
 -- iv. n2nu . nu2n = id
 
