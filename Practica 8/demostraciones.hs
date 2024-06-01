@@ -598,7 +598,7 @@ lado der)
      1 + id x' 
      DEMOSTRADO! 
 
--- b. demostrar las siguientes propiedades:
+-- b. demostrar las siguientes propiedades: LOS MAS COMPLICADOS!
 -- i. evalNU . succNU = (+1) . evalNU
 
 app.pp ext. 
@@ -830,9 +830,80 @@ ambos lados son iguales, queda demostrado el caso inductivo
 -- Quedó demostrado para todos los casos de d y ds, por lo que la propiedad, es verdadera.
 
 -- ii. evalNB . succNB = (+1) . evalNB
+    ppio de ext.
+
+    Para todo xs, evalNB . succNB = (+1) . evalNB
+
+    Por def (.), es equivalente a
+
+    Para todo xs, ¿ evalNB (succNB xs) = evalNB xs + 1 ? 
+
+Caso base) 
+    xs = []
+
+caso izq ) 
+    evalNB (succNB xs) 
+    = def. succNB , x <- []
+    evalNB ([]) 
+    = 0
+
+caso der) 
+    evalNB [] + 1 
+    = def. evalNB , x <- []
+    evalNB ([]) 
+    = 0
+
+caso Inductivo) 
+    xs = z:zs 
+    HI. evalNB (succNB zs ) = evalNB zs + 1
+    TI. ¿ evalNB (succNB z:zs ) = evalNB z:zs + 1 ? 
+
+caso izq )  
+    evalNB (succNB z:zs)
+    = def.succNB , x<- z:zs
+    evalNB (sumarUno z  (succNB zs) )
+    = def.sumarUno , x<- z  (succNB zs)  -- uso el caso recursivo de esta funcion! hay otro caso mas! 
+    evalNB (z: sumarUno I zs)            -- estamos en el caso que z = I 
+    =  def.evalNB , x<- z: sumarUno I zs 
+    1 + 2 * evalNB (sumarUno I zs) 
+
+caso der )  
+    evalNB (z:zs) + 1 
+    = def evalNB , x<- z:zs 
+    1 + 2 * evalNB zs  
+    -- lema  2 * evalNB zs  = 2 * evalNB (sumarUno I zs) 
+    SEMI DEMOSTRADO! FALTA DEMOSTRAR EL LEMA Y DEFINIR BIEN LAS FUNCIONES! 
+----------------------------------------------------------------------------------------------
 -- iii. para todo n1. para todo n2.
 -- evalNB (addNB n1 n2) = evalNB n1 + evalNB n2
+    
+    Para todo n1. para todo n2.
+    ¿evalNB (addNB n1 n2) = evalNB n1 + evalNB n2? 
+
+caso base ) 
+    n1 = [] 
+    N2 = []
+
+caso izq) 
+    evalNB (addNB [] [])
+    = def evalNB , x<- addNB [] []
+    addNBConCarry [] [] O
+    = def addNBConCarry , x<- addNB [] []
+    evalNB []  
+    = def. evalNB 
+    Z
+
+lado izq) 
+    evalNB [] + evalNB  []
+    = def. evalNB 
+    0
+
+caso inductivo ) 
+
+    falta terminar estos 4 ultimos ! 
+
 -- iv. nb2n . n2nb = id
+
 -- v. normalizarNB . normalizarNB = normalizarNB
 
 -- c. solamente una de las siguientes propiedades es verdadera. Dar un
@@ -844,6 +915,7 @@ ambos lados son iguales, queda demostrado el caso inductivo
 --                                  Sección III
 
 -- i. evalExpA . simplificarExpA = evalExpA
+
 -- ii. cantidadSumaCero . simplificarExpA = const 0
 
 -- b. demostrar por inducción estructural las siguientes propiedades:
