@@ -31,10 +31,6 @@ evalOpBinInt Mas x y t= x + y
 evalOpBinInt Por x y t= x * y 
 evalOpBinInt _   _ _ t= boom "operación inválida " t 
 
-evalOpUn :: UOp -> a -> a  
-evalOpUn        No x = undefined
-evalOpUn Siguiente x = undefined
-evalOpUn    Previo x = undefined
 
 -- ii. 
 evalExpRBool :: ExpR Bool -> TableroR -> Bool
@@ -121,20 +117,93 @@ cantSacar (Secuencia c1 c2) = cantSacar c1 +  cantSacar c2
 
 -- vii. 
 seqN :: Int -> ComandoR -> ComandoR
--- , que describe la
+-- que describe la
 -- secuencia de comandos que reitera el comando dado la cantidad de
--- veces dada.
-seqN          (Mover d) = 0
-seqN            (Poner) = 0
-seqN            (Sacar) = 1 
-seqN             (NoOp) = 0 
-seqN (Repetir (expN) c) = cantSacar c                
-seqN  (Mientras expB c) = cantSacar c    
-seqN  (Secuencia c1 c2) = cantSacar c1 +  cantSacar c2      
+-- veces dada
+seqN 0 c = c 
+seqN n c = Repetir  (Lit (n-1))   (seqN (n-1) c)
 
 -- viii. 
 repeat2Seq :: ComandoR -> ComandoR
 -- , que describe el
 -- comando resultante de reemplazar, en el comando dado, todas las
 -- apariciones del constructor Repetir aplicado a un literal por la
-repeat2Seq = undefined
+-- secuencia de comandos que reitera el comando correspondiente la
+-- cantidad de veces dada por el literal
+repeat2Seq NoOp = NoOp
+repeat2Seq (Mover dir) = Mover dir
+repeat2Seq Poner = Poner
+repeat2Seq Sacar = Sacar
+repeat2Seq (Repetir (Lit n) cmd') = seqN n cmd'          -- Reemplazamos el Repetir por una secuencia de comandos repetidos n veces
+repeat2Seq (Repetir exp cmd') = Repetir exp (repeat2Seq cmd')   
+repeat2Seq (Mientras exp cmd') = Mientras exp (repeat2Seq cmd')
+repeat2Seq (Secuencia cmd1 cmd2) = Secuencia (repeat2Seq cmd1) (repeat2Seq cmd2)
+
+
+
+-----------------------------------------------------------------------------------
+sequence :: [(a -> a)] -> a -> a
+sequence [] x = x
+sequence (f:fs) x = f (sequence fs x)
+
+evalMany :: Int -> ProgramaR -> TableroR -> TableroR
+evalMany 0 p t = t
+evalMany n p t = evalR p (evalMany (n-1) p t)
+
+evalList :: ProgramaR -> [TableroR] -> [TableroR]
+evalList p [] = []
+evalList p (t:ts) = evalR p t : evalList p ts
+
+
+para todo p. para todo ts1. para todo ts2.
+¿ evalList p (ts1 ++ ts2) = evalList p ts1 ++ evalList p ts2?
+
+    vamos a demostrar por induccion estructural  
+caso base ) 
+    ts1 = []
+    ts2 = []
+
+lado izq) 
+    evalList p ([]) 
+    = por def evalList
+    [] 
+
+lado der)  
+    evalList p [] ++ evalList p []
+    = por def evalList
+    [] 
+
+caso inductivo) 
+    ts1 = x:xs
+    ts2 = y:ys 
+    HI.evalList p ([x] ++ ts2) = evalList p [x] ++ evalList p ts2
+    TI. ¿evalList p (x:xs ++ ts2) = evalList p x:xs ++ evalList p ts2?
+
+lado izq) 
+    evalList p (x:xs ++ ts2)
+    = por def evalList
+    evalR p x : evalList p (xs++ts2)
+
+lado der) 
+    evalList p x:xs ++ evalList p ts2 
+
+    = por def evalList  , x <- p x:xs
+
+    evalR p x : evalList p (xs) ++ evalList p ts2  
+
+------------------------------------------------------------------------------------------------------
+
+para todo n.
+    eval (Repetir (Lit n) Poner) = eval (seqN n Poner)  
+    
+    =por princio de extensionabilida
+
+   ¿ eval (Repetir (Lit n) Poner) t = eval (seqN n Poner)  t ? 
+
+
+lado der) 
+    eval (seqN n Poner)  t
+    = def seqN 
+    Repetir  (Lit (n-1))   (seqN (n-1) Poner)
+    
+    
