@@ -90,18 +90,22 @@ evalR :: ComandoR -> TableroR -> TableroR
 -- , que describe
 -- el tablero resultante de evaluar el comando dado en el tablero dado.
 evalR         (Mover d) t = mover d t 
-evalR           (Poner) t = poner t 
-evalR           (Sacar) t = sacar t 
-evalR            (NoOp) t = boom "no se puede realizar ninguna operacion" t
-evalR  (Repetir (Lit n) c) t = if  n >= 0 
-                                then evalR (Repetir (Lit (n-1)) c ) t
-                                else t 
-                                
-evalR (Mientras expB c) t = if  bool
-                                then evalR (Mientras expB  c ) t
-                                else t  
-                                where bool = evalExpRBool expB t  --- ¿no hay un loop infinito aca?
-evalR (Secuencia c1 c2) t = evalR c1 (evalR c2 t)          
+evalR             Poner t = poner t 
+evalR             Sacar t = sacar t 
+evalR              NoOp t = t 
+evalR  (Repetir expN c) t = repetirR (evalExpRInt expN t)  (evalR c)  t 
+evalR (Mientras expB c) t = whileR (evalExpRBool expB t)  (evalR c)  t 
+evalR (Secuencia c1 c2) t = evalR c2 (evalR c1 t)          
+
+
+repetirR ::Int ->(TableroR -> TableroR) -> (TableroR -> TableroR )
+repetirR  0 f t = t 
+repetirR  n f t = f (repetirR (n-1) f t) 
+
+whileR :: Bool -> (TableroR -> TableroR) -> (TableroR -> TableroR ) 
+whileR False f t = t 
+whileR True  f t = f (whileR True f t )
+
 
 -- vi. 
 cantSacar :: ComandoR -> Int
@@ -142,68 +146,68 @@ repeat2Seq (Secuencia cmd1 cmd2) = Secuencia (repeat2Seq cmd1) (repeat2Seq cmd2)
 
 
 -----------------------------------------------------------------------------------
-sequence :: [(a -> a)] -> a -> a
-sequence [] x = x
-sequence (f:fs) x = f (sequence fs x)
+-- sequence :: [(a -> a)] -> a -> a
+-- sequence [] x = x
+-- sequence (f:fs) x = f (sequence fs x)
 
-evalMany :: Int -> ProgramaR -> TableroR -> TableroR
-evalMany 0 p t = t
-evalMany n p t = evalR p (evalMany (n-1) p t)
+-- evalMany :: Int -> ProgramaR -> TableroR -> TableroR
+-- evalMany 0 p t = t
+-- evalMany n p t = evalR p (evalMany (n-1) p t)
 
-evalList :: ProgramaR -> [TableroR] -> [TableroR]
-evalList p [] = []
-evalList p (t:ts) = evalR p t : evalList p ts
+-- evalList :: ProgramaR -> [TableroR] -> [TableroR]
+-- evalList p [] = []
+-- evalList p (t:ts) = evalR p t : evalList p ts
 
 
-para todo p. para todo ts1. para todo ts2.
-¿ evalList p (ts1 ++ ts2) = evalList p ts1 ++ evalList p ts2?
+-- para todo p. para todo ts1. para todo ts2.
+-- ¿ evalList p (ts1 ++ ts2) = evalList p ts1 ++ evalList p ts2?
 
-    vamos a demostrar por induccion estructural  
-caso base ) 
-    ts1 = []
-    ts2 = []
+--     vamos a demostrar por induccion estructural  
+-- caso base ) 
+--     ts1 = []
+--     ts2 = []
 
-lado izq) 
-    evalList p ([]) 
-    = por def evalList
-    [] 
+-- lado izq) 
+--     evalList p ([]) 
+--     = por def evalList
+--     [] 
 
-lado der)  
-    evalList p [] ++ evalList p []
-    = por def evalList
-    [] 
+-- lado der)  
+--     evalList p [] ++ evalList p []
+--     = por def evalList
+--     [] 
 
-caso inductivo) 
-    ts1 = x:xs
-    ts2 = y:ys 
-    HI.evalList p ([x] ++ ts2) = evalList p [x] ++ evalList p ts2
-    TI. ¿evalList p (x:xs ++ ts2) = evalList p x:xs ++ evalList p ts2?
+-- caso inductivo) 
+--     ts1 = x:xs
+--     ts2 = y:ys 
+--     HI.evalList p ([x] ++ ts2) = evalList p [x] ++ evalList p ts2
+--     TI. ¿evalList p (x:xs ++ ts2) = evalList p x:xs ++ evalList p ts2?
 
-lado izq) 
-    evalList p (x:xs ++ ts2)
-    = por def evalList
-    evalR p x : evalList p (xs++ts2)
+-- lado izq) 
+--     evalList p (x:xs ++ ts2)
+--     = por def evalList
+--     evalR p x : evalList p (xs++ts2)
 
-lado der) 
-    evalList p x:xs ++ evalList p ts2 
+-- lado der) 
+--     evalList p x:xs ++ evalList p ts2 
 
-    = por def evalList  , x <- p x:xs
+--     = por def evalList  , x <- p x:xs
 
-    evalR p x : evalList p (xs) ++ evalList p ts2  
+--     evalR p x : evalList p (xs) ++ evalList p ts2  
 
-------------------------------------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------------------------------
 
-para todo n.
-    eval (Repetir (Lit n) Poner) = eval (seqN n Poner)  
+-- para todo n.
+--     eval (Repetir (Lit n) Poner) = eval (seqN n Poner)  
     
-    =por princio de extensionabilida
+--     =por princio de extensionabilida
 
-   ¿ eval (Repetir (Lit n) Poner) t = eval (seqN n Poner)  t ? 
+--    ¿ eval (Repetir (Lit n) Poner) t = eval (seqN n Poner)  t ? 
 
 
-lado der) 
-    eval (seqN n Poner)  t
-    = def seqN 
-    Repetir  (Lit (n-1))   (seqN (n-1) Poner)
+-- lado der) 
+--     eval (seqN n Poner)  t
+--     = def seqN 
+--     Repetir  (Lit (n-1))   (seqN (n-1) Poner)
     
     

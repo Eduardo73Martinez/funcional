@@ -90,11 +90,11 @@ cfBExp (ROp rop ne1 ne2) = cfROp rop (cfNExp ne1)  (cfNExp ne2)
 
 cfNot :: BExp -> BExp
 cfNot (BCte b) = BCte (not b)
-cfNot be = Not be
+cfNot be       = Not be
 
 cfAnd :: BExp -> BExp -> BExp
 cfAnd (BCte b) be2 = if b then be2 else BCte False
-cfAnd be1 be2 = And be1 be2 
+cfAnd  be1     be2 = And be1 be2 
 
 cfOr :: BExp -> BExp -> BExp
 cfOr (BCte b) be2 = if b then BCte True else be2
