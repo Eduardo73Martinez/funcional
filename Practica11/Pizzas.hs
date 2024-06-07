@@ -60,4 +60,29 @@ esQueso Queso = True
 esQueso _     = False 
 
 conElDobleDeAceitunas :: Pizza -> Pizza
-conElDobleDeAceitunas= undefined
+conElDobleDeAceitunas=(\p-> conCapasTransformadas dobleDeA p )
+
+dobleDeA :: Ingrediente -> Ingrediente 
+dobleDeA (Aceitunas n) = Aceitunas (2*n)
+dobleDeA  x = x
+
+-- Ejercicio 3) Definir pizzaProcesada
+-- que expresa la definición de fold para la estructura de ​Pizza​
+pizzaProcesada :: (Ingrediente -> b -> b) -> b -> Pizza -> b 
+pizzaProcesada  f g Prepizza    = g  
+pizzaProcesada  f g (Capa i p') =  f i (pizzaProcesada f g p')         
+
+-- Ejercicio 4) Resolver todas las funciones de los puntos 1) y 2) utilizando la función                         
+-- pizzaProcesada​.
+
+-- a. 
+cantidadCapasQueCumplen'   :: (Ingrediente -> Bool) -> Pizza -> Int 
+cantidadCapasQueCumplen' =  -> pizzaProcesada (\x ys-> unoSiCeroSino (f x p) + ys) p
+
+-- b. 
+conCapasTransformadas'   :: (Ingrediente -> Ingrediente) -> Pizza -> Pizza 
+conCapasTransformadas' = undefined
+
+-- c. 
+soloLasCapasQue'  :: (Ingrediente -> Bool) -> Pizza -> Pizza
+soloLasCapasQue'= undefined
