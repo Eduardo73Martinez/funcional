@@ -42,7 +42,15 @@ sacaLactosa Ricota= Salsa
 sacaLactosa i     = i 
 
 aptaIntolerantesLactosa :: Pizza -> Bool 
-aptaIntolerantesLactosa = undefined
+aptaIntolerantesLactosa p = cantCapas p ==  cantidadCapasQueCumplen esApta p 
+                            where esApta Queso = False 
+                                  esApta Ricota = False 
+                                  esApta _ = True 
+
+cantCapas :: Pizza -> Int
+cantCapas Prepizza   = 0
+cantCapas (Capa i p) = 1 + cantCapas p
+
 
 cantidadDeQueso :: Pizza -> Int 
 cantidadDeQueso p = cantidadCapasQueCumplen (\i-> esQueso i) p 
