@@ -77,12 +77,20 @@ pizzaProcesada  f g (Capa i p') =  f i (pizzaProcesada f g p')
 
 -- a. 
 cantidadCapasQueCumplen'   :: (Ingrediente -> Bool) -> Pizza -> Int 
-cantidadCapasQueCumplen' =  -> pizzaProcesada (\x ys-> unoSiCeroSino (f x p) + ys) p
+cantidadCapasQueCumplen' f = pizzaProcesada (\i acc -> unoSiCeroSino (f i) + acc) 0
+
+--f = \i acc -> unoSiCeroSino (f i) + acc
+-- ES LO MISMO QUE ESTA FUNCION:
+f :: (Ingrediente -> Bool) -> Ingrediente -> Int -> Int
+f condicion ingrediente acumulador = unoSiCeroSino (condicion ingrediente) + acumulador
 
 -- b. 
 conCapasTransformadas'   :: (Ingrediente -> Ingrediente) -> Pizza -> Pizza 
-conCapasTransformadas' = undefined
+conCapasTransformadas' f = pizzaProcesada (\i p ->Capa (f i) p ) Prepizza  
+
 
 -- c. 
 soloLasCapasQue'  :: (Ingrediente -> Bool) -> Pizza -> Pizza
-soloLasCapasQue'= undefined
+soloLasCapasQue' = pizzaProcesada (i p ->Capa sacoCapa(i) p ) 
+
+
