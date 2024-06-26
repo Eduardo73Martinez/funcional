@@ -89,6 +89,22 @@ caminoMasLargo = foldT (\x ti td -> if length ti > length td  then [x] ++ ti els
 todosLosCaminos :: Tree a -> [[a]]
 todosLosCaminos =  foldT (\x ti td -> [x] : consACada x ti ++ consACada x td ) []
 
+todosLosCaminos :: Tree a -> [[a]]
+todosLosCaminos EmptyT = []
+todosLosCaminos (NodeT x EmptyT EmptyT) = [[x]]
+todosLosCaminos (NodeT x ti td) = agregarAlPrincipio x xss
+
+todosLosCaminos = recT z g
+    where z = []
+          g x EmptyT EmptyT ti td = [[x]]
+          g x ti td ri rd = agregarAlPrincipio x (ri ++ rd)
+
+todosLosCaminos = foldT z g
+    where z = []
+          g x [] [] = [[x]]
+          g x ri rd = agregarAlPrincipio x (ri ++ rd)
+
+
 consACada :: a -> [[a]] -> [[a]]
 consACada x []       = []
 consACada x (xs:xss) = (x:xs) : consACada x xss

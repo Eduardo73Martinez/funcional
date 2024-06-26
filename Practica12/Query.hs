@@ -77,13 +77,38 @@ projection  f table = map (\record -> filter (\(a, _) -> f a) record) table
 selection:: (Record a b->Bool) -> Table a b-> Table a b 
 selection f t = filter f t
 
+-- execute' :: Query a b -> Table a b 
+-- execute' = foldQ (\f xs -> selection f xs ) (\g xs -> projection g xs) (\xs ys -> products xs ys) (\i -> i)
+
 
 -- iii. 
-compact :: Query a b -> Query a b 
+compact' :: Query a b -> Query a b 
 --, que describe la query
 -- resultante de compactar las selecciones y proyecciones consecutivas
 -- en la query dada.
-compact = undefined 
+compact' = foldQ (\f xs -> simpSelect f xs ) (\g xs -> simpProject g xs ) (\xs ys -> Product xs ys) (\t ->  t)  
+
+
+compact :: Query a b -> Query a b
+compact        (Table t) = Table t
+compact  (Product q1 q2) = Product (compact q1) (compact q2)
+compact (Projection p q) = simpProject p (compact q)
+compact  (Selection p q) = simpSelect p (compact q)
+
+simpProject :: (a -> Bool) -> Query a b -> Query a b
+simpProject p1 (Projection p2 q) = Projection (conjunct p1 p2) q
+simpProject p1                 q = Projection p1 q
+
+simpSelect :: (Record a b -> Bool) -> Query a b -> Query a b
+simpSelect p1 (Selection p2 q) = Selection (conjunct p1 p2) q
+simpSelect p1               q  = Selection p1 q
+
+
+conjunct :: (a -> Bool) -> (a -> Bool) -> a -> Bool
+-- , que
+-- describe el predicado que da True solo cuando los dos predicados dados lo
+-- hacen.
+conjunct f1 f2 x = f1 x && f2 x 
 
 -- b. Demostrar la siguiente propiedad:
 -- execute . compact = execute
