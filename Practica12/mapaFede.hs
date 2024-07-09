@@ -204,89 +204,89 @@ allPaths = foldM (\xs -> [])
 agregarDir d [] = [[d]]
 agregarDir d dss = map (d:) dss
 
--- Para todo x, m. has (==x) m = any (elem x) (objectsPerLevel m)
+Para todo x, m. has (==x) m = any (elem x) (objectsPerLevel m)
 
--- -- Demostracion por inducción sobre m, siendo m un Mapa a cualquiera
+-- Demostracion por inducción sobre m, siendo m un Mapa a cualquiera
 
--- Caso base m = Cofre xs
+Caso base m = Cofre xs
 
--- T) ¿ has (==x) (Cofre xs) = any (elem x) (objectsPerLevel (Cofre xs)) ?
+T) ¿ has (==x) (Cofre xs) = any (elem x) (objectsPerLevel (Cofre xs)) ?
 
--- -- lado izq
--- has (==x) (Cofre xs)
--- = -- def has
--- any (==x) xs
--- = -- usando propiedad demostrada en prácticas
--- elem x xs
+-- lado izq
+has (==x) (Cofre xs)
+= -- def has
+any (==x) xs
+= -- usando propiedad demostrada en prácticas
+elem x xs
 
--- -- lado der
--- any (elem x) (objectsPerLevel (Cofre xs))
--- = -- def objectsPerLevel
--- any (elem x) [xs]
--- = -- reescribo
--- any (elem x) (xs:[])
--- = -- def any
--- elem x xs || any (elem x) []
--- = -- def any
--- elem x xs || False
--- = -- prop False neutro de ||
--- elem x xs
+-- lado der
+any (elem x) (objectsPerLevel (Cofre xs))
+= -- def objectsPerLevel
+any (elem x) [xs]
+= -- reescribo
+any (elem x) (xs:[])
+= -- def any
+elem x xs || any (elem x) []
+= -- def any
+elem x xs || False
+= -- prop False neutro de ||
+elem x xs
 
--- Prop. ya demostrada Para x, xs. any (==x) xs = elem x xs
+Prop. ya demostrada Para x, xs. any (==x) xs = elem x xs
 
--- Otras propiedades útiles:
--- any (elem x) xs = elem x (concat xs)
--- elem x (xs ++ ys) = elem x xs || elem x ys
--- f (xs ++ ys) = f xs `g` f ys
+Otras propiedades útiles:
+any (elem x) xs = elem x (concat xs)
+elem x (xs ++ ys) = elem x xs || elem x ys
+f (xs ++ ys) = f xs `g` f ys
 
--- Caso ind m = Nada m1
+Caso ind m = Nada m1
 
--- HI) has (==x) m1 = any (elem x) (objectsPerLevel m1)
--- TI) ¿ has (==x) (Nada m1) = any (elem x) (objectsPerLevel (Nada m1)) ?
+HI) has (==x) m1 = any (elem x) (objectsPerLevel m1)
+TI) ¿ has (==x) (Nada m1) = any (elem x) (objectsPerLevel (Nada m1)) ?
 
--- -- lado izq
--- has (==x) (Nada m1)
--- = -- def has
--- has (==x) m1
--- = -- HI
--- any (elem x) (objectsPerLevel m1)
+-- lado izq
+has (==x) (Nada m1)
+= -- def has
+has (==x) m1
+= -- HI
+any (elem x) (objectsPerLevel m1)
 
--- -- lado der
--- any (elem x) (objectsPerLevel (Nada m1))
--- = -- def objectsPerLevel
--- any (elem x) ([] : objectsPerLevel m1)
--- = -- def any
--- elem x [] || any (elem x) (objectsPerLevel m1)
--- = -- def elem
--- False || any (elem x) (objectsPerLevel m1)
--- = -- False nuetro de ||
--- any (elem x) (objectsPerLevel m1)
+-- lado der
+any (elem x) (objectsPerLevel (Nada m1))
+= -- def objectsPerLevel
+any (elem x) ([] : objectsPerLevel m1)
+= -- def any
+elem x [] || any (elem x) (objectsPerLevel m1)
+= -- def elem
+False || any (elem x) (objectsPerLevel m1)
+= -- False nuetro de ||
+any (elem x) (objectsPerLevel m1)
 
--- -- son iguales los lados
+-- son iguales los lados
 
--- Caso ind m = Bifurcacion xs m1 m2
+Caso ind m = Bifurcacion xs m1 m2
 
--- HI.1) has (==x) m1 = any (elem x) (objectsPerLevel m1)
--- HI.2) has (==x) m2 = any (elem x) (objectsPerLevel m2)
--- TI) ¿ has (==x) (Bifurcacion xs m1 m2) = any (elem x) (objectsPerLevel (Bifurcacion xs m1 m2)) ?
+HI.1) has (==x) m1 = any (elem x) (objectsPerLevel m1)
+HI.2) has (==x) m2 = any (elem x) (objectsPerLevel m2)
+TI) ¿ has (==x) (Bifurcacion xs m1 m2) = any (elem x) (objectsPerLevel (Bifurcacion xs m1 m2)) ?
 
--- -- lado izq
--- has (==x) (Bifurcacion xs m1 m2)
--- = -- def has
--- any (==x) xs || has (==x) m1 || has (==x) m2
--- = -- HI.1, HI.2
--- any (==x) xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
--- = -- Prop. practica 8
--- elem x xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
+-- lado izq
+has (==x) (Bifurcacion xs m1 m2)
+= -- def has
+any (==x) xs || has (==x) m1 || has (==x) m2
+= -- HI.1, HI.2
+any (==x) xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
+= -- Prop. practica 8
+elem x xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
 
--- -- lado der
--- any (elem x) (objectsPerLevel (Bifurcacion xs m1 m2))
--- = -- def objectsPerLevel
--- any (elem x) (xs : juntarPorNivel (objectsPerLevel m1) (objectsPerLevel m2))
--- = -- def any
--- elem x xs || any (elem x) (juntarPorNivel (objectsPerLevel m1) (objectsPerLevel m2))
--- = -- distribución según lema
--- elem x xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
+-- lado der
+any (elem x) (objectsPerLevel (Bifurcacion xs m1 m2))
+= -- def objectsPerLevel
+any (elem x) (xs : juntarPorNivel (objectsPerLevel m1) (objectsPerLevel m2))
+= -- def any
+elem x xs || any (elem x) (juntarPorNivel (objectsPerLevel m1) (objectsPerLevel m2))
+= -- distribución según lema
+elem x xs || any (elem x) (objectsPerLevel m1) || any (elem x) (objectsPerLevel m2)
 
 ------------------------------------------------------------------------------------
 

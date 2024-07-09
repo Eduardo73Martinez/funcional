@@ -36,17 +36,11 @@ foldQ f g h i  (Selection f' q)= f f' (foldQ f g h i q)
 --a. Definir las siguientes funciones sin utilizar recursión explícita:
 
 --i. 
-{-- 
+
 tables :: Query a b -> [Table a b]
 --, que describe la lista de
 --todas las tablas involucradas en la query dada.
---tables = foldQ (\_ xs -> xs) (\_ xs -> xs) (\xs ys -> xs ys)  (\t -> [t]) 
-tables query = foldQ (\_ tables -> tables)   -- processSelection
-                     (\_ tables -> tables)   -- processProjection
-                     (\tables1 tables2 -> tables1 ++ tables2)  -- processProduct
-                     (\records -> [records])  -- processTable
-                     query
---}
+tables = foldQ (\_ xs -> xs) (\_ xs -> xs) (\xs ys -> xs ys)  (\t -> [t]) 
 
 
 
@@ -77,8 +71,8 @@ projection  f table = map (\record -> filter (\(a, _) -> f a) record) table
 selection:: (Record a b->Bool) -> Table a b-> Table a b 
 selection f t = filter f t
 
--- execute' :: Query a b -> Table a b 
--- execute' = foldQ (\f xs -> selection f xs ) (\g xs -> projection g xs) (\xs ys -> products xs ys) (\i -> i)
+execute' :: Query a b -> Table a b 
+execute' = foldQ (\f xs -> selection f xs ) (\g xs -> projection g xs) (\xs ys -> products xs ys) (\i -> i)
 
 
 -- iii. 

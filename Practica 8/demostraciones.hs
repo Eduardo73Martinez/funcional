@@ -98,14 +98,14 @@ caso inductivo)
     
 lado izq ) 
     elem x (z:zs) 
-    = def elem, x <- x' (z:zs)
+                                = def elem, x <- x' (z:zs)
     x == z || elem x zs 
-    = por HI 
+                                = por HI 
     x == z || any ((== )x ) zs 
 
 lado Der) 
     any ((== ) x) (z:zs) 
-    = def any, x<- ((==) x' )(z:zs) 
+                                = def any, x<- ((==) x' )(z:zs) 
      x == z || any((==) x) xs
 
      DEMOSTRADO ! llegamos a lo mismo en ambos lados 
